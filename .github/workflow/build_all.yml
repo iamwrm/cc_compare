@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: 2020 Intel Corporation
+#
+# SPDX-License-Identifier: MIT
+
+name: build_all
+
+on: push
+
+env:
+  LINUX_BASEKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18445/l_BaseKit_p_2022.1.1.119_offline.sh
+  LINUX_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18438/l_HPCKit_p_2022.1.1.97_offline.sh
+  LINUX_CPP_COMPONENTS: intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+  LINUX_FORTRAN_COMPONENTS: intel-oneapi-compiler-fortran
+  LINUX_DPCPP_COMPONENTS: intel-oneapi-compiler-dpcpp-cpp
+  LINUX_CPP_COMPONENTS_WEB: intel.oneapi.lin.dpcpp-cpp-compiler-pro
+  LINUX_FORTRAN_COMPONENTS_WEB: intel.oneapi.lin.ifort-compiler
+  LINUX_DPCPP_COMPONENTS_WEB: intel.oneapi.lin.dpcpp-cpp-compiler
+  SAMPLES_TAG: 2022.1.0
+
+jobs:
+
+  build_linux_cpp:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v2
+    - name: cache install
+      id: cache-install
+      uses: actions/cache@v2
+      with:
+        path: |
+          /opt/intel/oneapi/compiler
+        key: install-${{ env.LINUX_HPCKIT_URL }}-${{ env.LINUX_CPP_COMPONENTS_WEB }}-compiler-${{ hashFiles('**/scripts/cache_exclude_linux.sh') }}
+
+    - name: install
+      if: steps.cache-install.outputs.cache-hit != 'true'
+      run: scripts/install_linux.sh $LINUX_HPCKIT_URL $LINUX_CPP_COMPONENTS_WEB
+
+    - name: build
+      run: scripts/build_linux.sh c++ $SAMPLES_TAG
+
+    - name: exclude unused files from cache
+      if: steps.cache-install.outputs.cache-hit != 'true'
+      run: scripts/cache_exclude_linux.sh
+
+    # Delete the following if you don't want to save install logs
+    - name: Saving install logs
+      if: steps.cache-install.outputs.cache-hit != 'true'
+      uses: actions/upload-artifact@v2
+      with:
+        name: InstallLogs_${{ github.job }}
+        path: |
+          bootstrapper*
+          installer*
+        retention-days: 7
+
+  build_linux_dpcpp:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v2
+    - name: cache install
+      id: cache-install
+      uses: actions/cache@v2
+      with:
+        path: |
+          /opt/intel/oneapi/compiler
+          /opt/intel/oneapi/tbb
+        key: install-${{ env.LINUX_BASEKIT_URL }}-${{ env.LINUX_DPCPP_COMPONENTS_WEB }}-compiler-tbb-${{ hashFiles('**/scripts/cache_exclude_linux.sh') }}
+
+    - name: install
+      if: steps.cache-install.outputs.cache-hit != 'true'
+      run: scripts/install_linux.sh $LINUX_BASEKIT_URL $LINUX_DPCPP_COMPONENTS_WEB
+
+    - name: build
+      run: scripts/build_linux.sh dpc++ $SAMPLES_TAG
+      
+    - name: exclude unused files from cache
+      if: steps.cache-install.outputs.cache-hit != 'true'
+      run: scripts/cache_exclude_linux.sh
+
+    # Delete the following if you don't want to save install logs
+    - name: Saving install logs
+      if: steps.cache-install.outputs.cache-hit != 'true'
+      uses: actions/upload-artifact@v2
+      with:
+        name: InstallLogs_${{ github.job }}
+        path: |
+          bootstrapper*
+          installer*
+        retention-days: 7
