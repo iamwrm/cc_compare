@@ -11,10 +11,15 @@ jobs:
         shell: bash
     steps:
     - uses: actions/checkout@v2
-    - run: |
-      bash ci/prepare_ubuntu20.sh
-      bash ci/setup_gbench.sh
-      make configure
-      make build
-      make run 
-      make bench
+
+    - name: Prepare
+      run: |
+        bash ci/prepare_ubuntu20.sh
+        bash ci/setup_gbench.sh
+        make configure
+        make build
+
+    - name: Run
+      run: |
+        make run 
+        make bench
