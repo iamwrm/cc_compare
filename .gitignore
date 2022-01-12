@@ -1,1 +1,4 @@
 build
+benchmark
+compile_commands.json
+.cache
