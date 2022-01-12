@@ -11,16 +11,22 @@ include(cmake/support_libs.cmake)
 
 # file(GLOB srcs src/main.cpp)
 
-add_executable(et-bench 
+
+add_executable(bench
+src/bench.cpp
+)
+target_include_directories(bench
+BEFORE PRIVATE "${BENCHMARK_FOLDER}/include"
+)
+target_link_libraries(bench
+${BENCHMARK_LIBRARY}
+pthread
+)
+
+
+add_executable(main
 src/main.cpp
 )
 
-target_include_directories(et-bench 
-BEFORE PRIVATE "${BENCHMARK_FOLDER}/include"
-)
-
-target_link_libraries(et-bench
-${CONAN_LIBS}
-${BENCHMARK_LIBRARY}
-pthread
+target_link_libraries(main
 )

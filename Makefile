@@ -28,7 +28,10 @@ build:
 	cmake --build ${BUILD_DIR} -j
 	
 run: 
-	${BUILD_DIR}/et-bench
+	${BUILD_DIR}/main
+
+bench: 
+	${BUILD_DIR}/bench
 
 clean:
 	rm -rf ${BUILD_DIR}
