@@ -1,8 +1,4 @@
-#include <chrono>
 #include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <random>
 
 namespace with_attributes {
 constexpr double pow(double x, long long n) noexcept
@@ -56,10 +52,4 @@ constexpr double cos(double x) noexcept
 }
 } // namespace no_attributes
 
-double gen_random() noexcept
-{
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_real_distribution<double> dis(-1.0, 1.0);
-    return dis(gen);
-}
+double gen_random() noexcept;

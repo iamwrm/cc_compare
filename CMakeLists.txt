@@ -9,23 +9,30 @@ set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 include(cmake/support_libs.cmake)
 
-# file(GLOB srcs src/main.cpp)
+file(GLOB srcs src/*.cpp)
 
 
 add_executable(bench
-src/bench.cpp
+src/bin/bench.cpp
+${srcs}
 )
-target_include_directories(bench
-BEFORE PRIVATE "${BENCHMARK_FOLDER}/include"
+
+target_include_directories(bench BEFORE 
+PRIVATE "${BENCHMARK_FOLDER}/include"
+PRIVATE "${CMAKE_SOURCE_DIR}/src"
 )
 target_link_libraries(bench
 ${BENCHMARK_LIBRARY}
 pthread
 )
 
-
 add_executable(main
-src/main.cpp
+src/bin/main.cpp
+${srcs}
+)
+
+target_include_directories(main BEFORE
+PRIVATE "${CMAKE_SOURCE_DIR}/src"
 )
 
 target_link_libraries(main

@@ -1,12 +1,10 @@
-#include "test.hpp"
+#include <test.hpp>
 
 #include <chrono>
-#include <cmath>
 #include <iomanip>
 #include <iostream>
-#include <random>
 
-volatile double sink {}; // ensures a side effect
+volatile double sink {};
 
 int main()
 {
