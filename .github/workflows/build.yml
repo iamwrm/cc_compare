@@ -14,7 +14,7 @@ jobs:
 
     - name: Prepare
       run: |
-        bash ci/prepare_ubuntu20.sh
+        sudo bash ci/prepare_ubuntu20.sh
         bash ci/setup_gbench.sh
         make configure
         make build
